@@ -4,7 +4,6 @@ module.exports = {
     execute(message, args) {
       const adminID = config.adminID;
       
-      // Überprüfe, ob der Benutzer die Admin-ID hat
       if (message.author.id !== adminID) {
         return message.reply('Du hast nicht die Berechtigung, diesen Befehl auszuführen!');
       }
