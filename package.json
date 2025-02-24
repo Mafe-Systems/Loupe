@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "commands-easy-discord": "^2.3.8",
+    "discord.js": "^14.18.0"
+  }
+}
