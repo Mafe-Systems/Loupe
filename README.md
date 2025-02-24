@@ -24,6 +24,7 @@ The bot is currently in development. The core features like moderation commands 
     - **Prefix**
     - **Admin ID**: Set the admin user ID via the dashboard.
     - **Owner ID**
+  - Basic CSS
 
 ### 🚧 Planned Features (Coming Soon):
 
