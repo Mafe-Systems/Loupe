@@ -1,16 +1,33 @@
-<form action="/update-config" method="POST">
-    <label for="token">Bot Token:</label>
-    <input type="text" id="token" name="token" value="<%= token %>"><br>
-  
-    <label for="prefix">Prefix:</label>
-    <input type="text" id="prefix" name="prefix" value="<%= prefix %>"><br>
-  
-    <label for="adminID">Admin Discord ID:</label>
-    <input type="text" id="adminID" name="adminID" value="<%= adminID %>"><br>
-  
-    <label for="ownerID">Owner ID:</label>
-    <input type="text" id="ownerID" name="ownerID" value="<%= ownerID %>"><br>
-  
-    <button type="submit">Speichern</button>
-  </form>
-  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loupe Dashboard</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to Loupe Dashboard</h1>
+
+    <div class="config">
+      <h2>Current Configuration</h2>
+      <p><strong>Prefix:</strong> <%= prefix %></p>
+      <p><strong>Admin ID:</strong> <%= adminID %></p>
+      <p><strong>Owner ID:</strong> <%= ownerID %></p>
+    </div>
+
+    <form action="/update-config" method="POST">
+      <label for="prefix">Prefix:</label>
+      <input type="text" id="prefix" name="prefix" value="<%= prefix %>" required>
+
+      <label for="adminID">Admin ID:</label>
+      <input type="text" id="adminID" name="adminID" value="<%= adminID %>" required>
+
+      <label for="ownerID">Owner ID:</label>
+      <input type="text" id="ownerID" name="ownerID" value="<%= ownerID %>" required>
+
+      <label for="token">Bot Token:</label>
+      <input type="text" id="token" name="token" value="" required>
+
+      <button type="submit">Save Co
