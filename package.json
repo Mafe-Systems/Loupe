@@ -3,6 +3,7 @@
     "commands-easy-discord": "^2.3.8",
     "discord.js": "^14.18.0",
     "ejs": "^3.1.10",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0"
   }
 }

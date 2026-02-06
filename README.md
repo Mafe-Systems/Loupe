@@ -79,7 +79,21 @@ Make sure you have the following installed:
    Replace `YOUR_DISCORD_TOKEN`, `YOUR_ADMIN_USER_ID`, and `YOUR_OWNER_ID` with actual values.  
    The **Admin User ID** is the Discord ID of the user who is allowed to run moderation commands (kick, ban).
 
-4. **Run the bot:**
+   ⚠️ **Security Note**: Never commit `config.json` to version control as it contains sensitive data. The file is already in `.gitignore`.
+
+4. **Set up environment variables (for dashboard):**
+
+   Copy `.env.example` to `.env` and set a strong password:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Edit `.env` and set `DASHBOARD_PASSWORD` to a strong password.
+
+   ⚠️ **Important**: The dashboard will not start without setting `DASHBOARD_PASSWORD`. This is a security requirement to prevent unauthorized access.
+
+5. **Run the bot:**
 
    To start the bot, run the following command:
 
@@ -103,7 +117,40 @@ Make sure you have the following installed:
 
 2. **Access the dashboard:**
 
-   The dashboard will be available on your local machine at `http://localhost:3000`. You can use it to update the bot configuration like the admin user ID and prefix.
+   The dashboard will be available on your local machine at `http://127.0.0.1:3000`. 
+   
+   🔒 **Authentication**: The dashboard is protected by HTTP Basic Authentication. When prompted, enter:
+   - Username: (any username)
+   - Password: The value you set in `DASHBOARD_PASSWORD` environment variable
+
+   You can use the dashboard to update the bot configuration like the admin user ID and prefix.
+   
+   ⚠️ **Security Note**: For security reasons, the bot token cannot be viewed or modified through the web dashboard. Update it directly in `config/config.json`.
+
+---
+
+## Security Best Practices
+
+This bot implements several security measures to protect your Discord server and bot:
+
+### 🔒 Implemented Security Features:
+
+1. **Dashboard Authentication**: HTTP Basic Authentication protects the web dashboard from unauthorized access
+2. **No Token Exposure**: The Discord bot token is never displayed or transmitted through the web interface
+3. **Input Validation**: All configuration inputs are validated to prevent injection attacks
+4. **Permission Checks**: Commands verify user permissions and prevent privilege escalation
+5. **Localhost Binding**: Dashboard server binds to 127.0.0.1 by default for local access only
+6. **Security Headers**: X-Frame-Options, X-Content-Type-Options, and other security headers are set
+7. **Safe File Operations**: Absolute paths are used to prevent path traversal attacks
+
+### 🛡️ Security Recommendations:
+
+- **Keep your bot token secret**: Never share it or commit it to version control
+- **Use a strong dashboard password**: Set a complex password in the `DASHBOARD_PASSWORD` environment variable
+- **Run dashboard locally**: Only expose the dashboard when needed, and use SSH tunneling for remote access
+- **Regular updates**: Keep dependencies updated to patch security vulnerabilities
+- **Monitor bot activity**: Review logs regularly for suspicious activity
+- **Limit admin access**: Only give admin permissions to trusted users
 
 ---
 
