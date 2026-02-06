@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const rateLimit = require('express-rate-limit');
 const app = express();
 
 // Security: Use absolute path for config file
@@ -11,6 +12,22 @@ const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD || 'change_me_please';
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// Security: Rate limiting to prevent brute force attacks and DoS
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 failed login attempts per windowMs
+  skipSuccessfulRequests: true,
+  message: 'Too many login attempts, please try again later.',
+});
 
 // Security: Add security headers
 app.use((req, res, next) => {
@@ -23,6 +40,9 @@ app.use((req, res, next) => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
+
+// Apply rate limiting to all requests
+app.use(limiter);
 
 // Security: Basic authentication middleware
 const authenticate = (req, res, next) => {
@@ -67,7 +87,7 @@ const validateConfig = (config) => {
   return errors;
 };
 
-app.get('/', authenticate, (req, res) => {
+app.get('/', authLimiter, authenticate, (req, res) => {
   try {
     const config = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
     res.render('index', {
@@ -82,7 +102,7 @@ app.get('/', authenticate, (req, res) => {
   }
 });
 
-app.post('/update-config', authenticate, (req, res) => {
+app.post('/update-config', authLimiter, authenticate, (req, res) => {
   try {
     // Security: Read existing config to preserve token
     const existingConfig = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
