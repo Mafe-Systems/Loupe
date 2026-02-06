@@ -10,24 +10,38 @@
   <div class="container">
     <h1>Welcome to Loupe Dashboard</h1>
 
+    <% if (error) { %>
+      <div class="error-message" style="background-color: #ffebee; color: #c62828; padding: 10px; margin: 10px 0; border-radius: 4px;">
+        <strong>Error:</strong> <%= error %>
+      </div>
+    <% } %>
+
+    <% if (success) { %>
+      <div class="success-message" style="background-color: #e8f5e9; color: #2e7d32; padding: 10px; margin: 10px 0; border-radius: 4px;">
+        <strong>Success:</strong> <%= success %>
+      </div>
+    <% } %>
+
     <div class="config">
       <h2>Current Configuration</h2>
       <p><strong>Prefix:</strong> <%= prefix %></p>
       <p><strong>Admin ID:</strong> <%= adminID %></p>
       <p><strong>Owner ID:</strong> <%= ownerID %></p>
+      <p style="color: #666; font-size: 0.9em; margin-top: 10px;"><em>Note: Bot token cannot be viewed or updated via the dashboard for security reasons. Update it directly in config/config.json.</em></p>
     </div>
 
     <form action="/update-config" method="POST">
       <label for="prefix">Prefix:</label>
-      <input type="text" id="prefix" name="prefix" value="<%= prefix %>" required>
+      <input type="text" id="prefix" name="prefix" value="<%= prefix %>" required maxlength="5">
 
       <label for="adminID">Admin ID:</label>
-      <input type="text" id="adminID" name="adminID" value="<%= adminID %>" required>
+      <input type="text" id="adminID" name="adminID" value="<%= adminID %>" required pattern="\d+">
 
       <label for="ownerID">Owner ID:</label>
-      <input type="text" id="ownerID" name="ownerID" value="<%= ownerID %>" required>
+      <input type="text" id="ownerID" name="ownerID" value="<%= ownerID %>" required pattern="\d+">
 
-      <label for="token">Bot Token:</label>
-      <input type="text" id="token" name="token" value="" required>
-
-      <button type="submit">Save Co
+      <button type="submit">Save Configuration</button>
+    </form>
+  </div>
+</body>
+</html>
