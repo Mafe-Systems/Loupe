@@ -32,13 +32,13 @@
 
     <form action="/update-config" method="POST">
       <label for="prefix">Prefix:</label>
-      <input type="text" id="prefix" name="prefix" value="<%= prefix %>" required maxlength="5">
+      <input type="text" id="prefix" name="prefix" value="<%= prefix %>" required maxlength="5" title="Command prefix (max 5 characters)">
 
       <label for="adminID">Admin ID:</label>
-      <input type="text" id="adminID" name="adminID" value="<%= adminID %>" required pattern="\d+">
+      <input type="text" id="adminID" name="adminID" value="<%= adminID %>" required pattern="\d+" title="Discord User ID (numbers only)">
 
       <label for="ownerID">Owner ID:</label>
-      <input type="text" id="ownerID" name="ownerID" value="<%= ownerID %>" required pattern="\d+">
+      <input type="text" id="ownerID" name="ownerID" value="<%= ownerID %>" required pattern="\d+" title="Discord User ID (numbers only)">
 
       <button type="submit">Save Configuration</button>
     </form>

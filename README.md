@@ -91,6 +91,8 @@ Make sure you have the following installed:
 
    Edit `.env` and set `DASHBOARD_PASSWORD` to a strong password.
 
+   ⚠️ **Important**: The dashboard will not start without setting `DASHBOARD_PASSWORD`. This is a security requirement to prevent unauthorized access.
+
 5. **Run the bot:**
 
    To start the bot, run the following command:

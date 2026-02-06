@@ -7,8 +7,15 @@ const app = express();
 // Security: Use absolute path for config file
 const CONFIG_PATH = path.join(__dirname, '..', 'config', 'config.json');
 
-// Security: Simple authentication middleware
-const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD || 'change_me_please';
+// Security: Authentication configuration
+const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD;
+
+// Security: Warn if no password is set
+if (!DASHBOARD_PASSWORD) {
+  console.error('\n⚠️  WARNING: DASHBOARD_PASSWORD environment variable is not set!');
+  console.error('⚠️  The dashboard will not be accessible until you set a password.');
+  console.error('⚠️  Set DASHBOARD_PASSWORD in your environment or .env file.\n');
+}
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -46,6 +53,11 @@ app.use(limiter);
 
 // Security: Basic authentication middleware
 const authenticate = (req, res, next) => {
+  // Require password to be set
+  if (!DASHBOARD_PASSWORD) {
+    return res.status(503).send('Dashboard is not configured. Please set DASHBOARD_PASSWORD environment variable.');
+  }
+  
   const auth = req.headers.authorization;
   
   if (!auth) {
@@ -60,7 +72,26 @@ const authenticate = (req, res, next) => {
   
   const [username, password] = Buffer.from(credentials, 'base64').toString().split(':');
   
-  if (password !== DASHBOARD_PASSWORD) {
+  // Security: Constant-time comparison to prevent timing attacks
+  const passwordBuffer = Buffer.from(password);
+  const expectedBuffer = Buffer.from(DASHBOARD_PASSWORD);
+  
+  // Ensure buffers are same length to prevent length-based timing attacks
+  if (passwordBuffer.length !== expectedBuffer.length) {
+    res.setHeader('WWW-Authenticate', 'Basic realm="Loupe Dashboard"');
+    return res.status(401).send('Invalid credentials');
+  }
+  
+  // Use crypto.timingSafeEqual for constant-time comparison
+  const crypto = require('crypto');
+  let isValid = false;
+  try {
+    isValid = crypto.timingSafeEqual(passwordBuffer, expectedBuffer);
+  } catch (e) {
+    isValid = false;
+  }
+  
+  if (!isValid) {
     res.setHeader('WWW-Authenticate', 'Basic realm="Loupe Dashboard"');
     return res.status(401).send('Invalid credentials');
   }
@@ -72,8 +103,8 @@ const authenticate = (req, res, next) => {
 const validateConfig = (config) => {
   const errors = [];
   
-  if (!config.prefix || typeof config.prefix !== 'string' || config.prefix.length > 5) {
-    errors.push('Prefix must be a string with max 5 characters');
+  if (!config.prefix || typeof config.prefix !== 'string' || config.prefix.trim().length === 0 || config.prefix.length > 5) {
+    errors.push('Prefix must be a non-empty string with max 5 characters');
   }
   
   if (!config.adminID || typeof config.adminID !== 'string' || !/^\d+$/.test(config.adminID)) {
